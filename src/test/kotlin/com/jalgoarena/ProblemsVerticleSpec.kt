@@ -49,15 +49,12 @@ class ProblemsVerticleSpec {
         val async = context.async()
 
         vertx.createHttpClient().getNow(port, "localhost", "/problems/fib") { response ->
+            context.assertEquals(response.statusCode(), 200)
+            context.assertEquals(response.headers().get("content-type"), "application/json; charset=utf-8")
             response.handler { body ->
-                try {
-                    val problem = jacksonObjectMapper().readValue(body.toString(), Problem::class.java)
-                    context.assertEquals(problem.id, "fib")
-                } catch(e: Throwable) {
-                    context.fail(e)
-                } finally {
-                    async.complete()
-                }
+                val problem = jacksonObjectMapper().readValue(body.toString(), Problem::class.java)
+                context.assertEquals(problem.id, "fib")
+                async.complete()
             }
         }
     }
@@ -68,15 +65,12 @@ class ProblemsVerticleSpec {
         val async = context.async()
 
         vertx.createHttpClient().getNow(port, "localhost", "/problems") { response ->
+            context.assertEquals(response.statusCode(), 200)
+            context.assertEquals(response.headers().get("content-type"), "application/json; charset=utf-8")
             response.handler { body ->
-                try {
-                    val problems = deserializeArrayOfProblems(body)
-                    context.assertTrue(problems.size == 1)
-                } catch(e: Throwable) {
-                    context.fail(e)
-                } finally {
-                    async.complete()
-                }
+                val problems = deserializeArrayOfProblems(body)
+                context.assertTrue(problems.size == 1)
+                async.complete()
             }
         }
     }
