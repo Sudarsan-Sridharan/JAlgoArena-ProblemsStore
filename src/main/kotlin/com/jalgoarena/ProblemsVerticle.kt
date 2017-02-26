@@ -1,12 +1,15 @@
 package com.jalgoarena
 
-import com.jalgoarena.domain.Problem
+import com.jalgoarena.data.XodusProblemsRepository
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.Json
 import io.vertx.ext.web.Router
+import java.util.concurrent.CompletableFuture.supplyAsync
 
 class ProblemsVerticle : AbstractVerticle() {
+
+    private val repository = XodusProblemsRepository()
 
     override fun start(future: Future<Void>) {
         val router = Router.router(vertx)
@@ -14,11 +17,12 @@ class ProblemsVerticle : AbstractVerticle() {
         router.route("/problems").handler { routingContext ->
             val response = routingContext.response()
 
-            val problem = Problem("fib", "Fibonacci", "Fibonacci prob" +
-                    "lem", 1, null, null, 1)
-
-            response.putHeader("content-type", "application/json; charset=utf-8")
-                    .end(Json.encodePrettily(problem))
+            supplyAsync {
+                repository.findAll()
+            }.thenAcceptAsync { problems ->
+                response.putHeader("content-type", "application/json; charset=utf-8")
+                        .end(Json.encodePrettily(problems))
+            }
         }
 
         vertx.createHttpServer()

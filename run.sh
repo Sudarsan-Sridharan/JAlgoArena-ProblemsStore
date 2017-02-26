@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-java -jar jalgoarena-problemsstore-*-all.jar -conf config.json
+java -jar JAlgoArena-ProblemsStore-*-all.jar -conf config.json

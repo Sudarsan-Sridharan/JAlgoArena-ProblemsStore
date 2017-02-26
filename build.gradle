@@ -22,7 +22,7 @@ apply plugin: 'kotlin'
 apply from: "$rootDir/gradle/versioning.gradle"
 
 jar {
-    baseName = 'JalgoArena-ProblemsStore'
+    baseName = 'JAlgoArena-ProblemsStore'
     manifest {
         attributes('Main-Class': 'io.vertx.core.Starter',
                 'Main-Verticle': 'com.jalgoarena.ProblemsVerticle'
@@ -46,7 +46,27 @@ dependencies {
             "org.jetbrains.xodus:xodus-entity-store:$xodus_version"
 
     testCompile "junit:junit:4.12",
-            "io.vertx:vertx-unit:$vertx_version"
+            "io.vertx:vertx-unit:$vertx_version",
+            "com.winterbe:expekt:0.5.0",
+            'org.assertj:assertj-core:3.6.2',
+            "org.springframework.boot:spring-boot-starter-test:1.4.2.RELEASE"
+}
+
+apply plugin: 'jacoco'
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport
+
+defaultTasks 'clean', 'shadowJar'
+
+task stage {
+    dependsOn 'shadowJar'
 }
 
 task releaseZip(type: Zip, dependsOn: 'shadowJar') {
