@@ -1,0 +1,36 @@
+buildscript {
+    ext.kotlin_version = '1.0.6'
+    ext.vertx_version = '3.3.3'
+
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+group 'jalgoarena'
+
+apply plugin: 'kotlin'
+apply from: "$rootDir/gradle/versioning.gradle"
+
+jar {
+    baseName = 'JalgoArena-ProblemsStore'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+            "io.vertx:vertx-core:$vertx_version"
+
+    testCompile "junit:junit:4.12",
+            "io.vertx:vertx-unit:$vertx_version"
+}
