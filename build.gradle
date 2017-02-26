@@ -21,6 +21,11 @@ apply from: "$rootDir/gradle/versioning.gradle"
 
 jar {
     baseName = 'JalgoArena-ProblemsStore'
+    manifest {
+        attributes('Main-Class': 'io.vertx.core.Starter',
+                'Main-Verticle': 'com.jalgoarena.ProblemsVerticle'
+        )
+    }
 }
 
 repositories {
@@ -33,4 +38,18 @@ dependencies {
 
     testCompile "junit:junit:4.12",
             "io.vertx:vertx-unit:$vertx_version"
+}
+
+task releaseZip(type: Zip, dependsOn: 'shadowJar') {
+    from('build/libs/') {
+        include('*.jar')
+    }
+    from 'run.sh'
+    from 'config.json'
+    from('DataStore') {
+        into('DataStore')
+        exclude('*.lck')
+    }
+    archiveName "JAlgoArena-Problems-${version}.zip"
+    destinationDir(file('build/libs'))
 }

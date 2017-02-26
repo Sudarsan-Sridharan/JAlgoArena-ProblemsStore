@@ -5,16 +5,16 @@ import io.vertx.core.Future
 
 class ProblemsVerticle : AbstractVerticle() {
 
-    override fun start(startFuture: Future<Void>) {
+    override fun start(future: Future<Void>) {
         vertx.createHttpServer()
                 .requestHandler {
                     it.response().end("<h1>Hello from my first Vert.x 3 application</h1>")
                 }
-                .listen(5002) { result ->
+                .listen(config().getInteger("http.port", 5002)) { result ->
                     if (result.succeeded()) {
-                        startFuture.complete()
+                        future.complete()
                     } else {
-                        startFuture.fail(result.cause())
+                        future.fail(result.cause())
                     }
                 }
     }
