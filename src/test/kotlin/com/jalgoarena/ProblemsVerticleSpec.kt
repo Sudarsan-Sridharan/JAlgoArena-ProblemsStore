@@ -43,9 +43,9 @@ class ProblemsVerticleSpec {
     fun starts_up(context: TestContext) {
         val async = context.async()
 
-        vertx.createHttpClient().getNow(port, "localhost", "/") { response ->
+        vertx.createHttpClient().getNow(port, "localhost", "/problems") { response ->
             response.handler { body ->
-                context.assertTrue(body.toString().contains("Hello"))
+                context.assertTrue(body.toString().contains("fib"))
                 async.complete()
             }
         }
