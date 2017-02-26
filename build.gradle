@@ -27,7 +27,7 @@ mainClassName = 'io.vertx.core.Launcher'
 jar {
     baseName = 'JAlgoArena-ProblemsStore'
     manifest {
-        attributes 'Main-Verticle': 'com.jalgoarena.ProblemsVerticle'
+        attributes 'Main-Verticle': 'com.jalgoarena.ProblemsAPIVerticle'
     }
 }
 
@@ -50,7 +50,6 @@ dependencies {
 
     testCompile "junit:junit:4.12",
             "io.vertx:vertx-unit:$vertx_version",
-            "com.winterbe:expekt:0.5.0",
             'org.assertj:assertj-core:3.6.2',
             "org.springframework.boot:spring-boot-starter-test:1.4.2.RELEASE"
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jalgoarena.domain.Problem
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
+import io.vertx.core.buffer.Buffer
+import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.unit.TestContext
 import io.vertx.ext.unit.junit.VertxUnitRunner
@@ -32,7 +34,7 @@ class ProblemsVerticleSpec {
             config = JsonObject().put("http.port", port)
         }
 
-        vertx.deployVerticle(ProblemsVerticle::class.java.name, deploymentOptions,
+        vertx.deployVerticle(ProblemsAPIVerticle::class.java.name, deploymentOptions,
                 context.asyncAssertSuccess())
     }
 
@@ -42,14 +44,15 @@ class ProblemsVerticleSpec {
     }
 
     @Test
-    fun starts_up(context: TestContext) {
+    fun returns_fib_problem(context: TestContext) {
+        sendProblemsOnEventBus()
         val async = context.async()
 
         vertx.createHttpClient().getNow(port, "localhost", "/problems/fib") { response ->
             response.handler { body ->
                 try {
-                    val problems = jacksonObjectMapper().readValue(body.toString(), Problem::class.java)
-                    context.assertTrue(problems.id == "fib")
+                    val problem = jacksonObjectMapper().readValue(body.toString(), Problem::class.java)
+                    context.assertEquals(problem.id, "fib")
                 } catch(e: Throwable) {
                     context.fail(e)
                 } finally {
@@ -57,5 +60,34 @@ class ProblemsVerticleSpec {
                 }
             }
         }
+    }
+
+    @Test
+    fun returns_all_problems(context: TestContext) {
+        sendProblemsOnEventBus()
+        val async = context.async()
+
+        vertx.createHttpClient().getNow(port, "localhost", "/problems") { response ->
+            response.handler { body ->
+                try {
+                    val problems = deserializeArrayOfProblems(body)
+                    context.assertTrue(problems.size == 1)
+                } catch(e: Throwable) {
+                    context.fail(e)
+                } finally {
+                    async.complete()
+                }
+            }
+        }
+    }
+
+    private fun deserializeArrayOfProblems(body: Buffer) =
+            jacksonObjectMapper().readValue(body.toString(), Array<Problem>::class.java)
+
+    private fun sendProblemsOnEventBus() {
+        val problem = Problem("fib", "Fibonacci", "Description", 1, null, null, 1)
+        val problemsAsJson = Json.encode(listOf(problem))
+
+        vertx.eventBus().publish("problems", problemsAsJson)
     }
 }

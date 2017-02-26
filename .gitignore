@@ -3,3 +3,4 @@ build/
 .idea
 .vertx/
 DataStore/xd.lck
+out
