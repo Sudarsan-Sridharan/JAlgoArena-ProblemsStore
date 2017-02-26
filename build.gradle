@@ -19,14 +19,15 @@ plugins {
 group 'jalgoarena'
 
 apply plugin: 'kotlin'
+apply plugin: 'application'
 apply from: "$rootDir/gradle/versioning.gradle"
+
+mainClassName = 'io.vertx.core.Launcher'
 
 jar {
     baseName = 'JAlgoArena-ProblemsStore'
     manifest {
-        attributes('Main-Class': 'io.vertx.core.Starter',
-                'Main-Verticle': 'com.jalgoarena.ProblemsVerticle'
-        )
+        attributes 'Main-Verticle': 'com.jalgoarena.ProblemsVerticle'
     }
 }
 
@@ -38,12 +39,14 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
             "io.vertx:vertx-core:$vertx_version",
             "io.vertx:vertx-web:$vertx_version",
-            'com.fasterxml.jackson.core:jackson-databind:$jackson_version',
-            'com.fasterxml.jackson.core:jackson-core:$jackson_version',
-            'com.fasterxml.jackson.core:jackson-annotations:$jackson_version',
+            "com.fasterxml.jackson.core:jackson-databind:$jackson_version",
+            "com.fasterxml.jackson.core:jackson-core:$jackson_version",
+            "com.fasterxml.jackson.core:jackson-annotations:$jackson_version",
             "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version",
             "org.jetbrains.xodus:xodus-openAPI:$xodus_version",
-            "org.jetbrains.xodus:xodus-entity-store:$xodus_version"
+            "org.jetbrains.xodus:xodus-entity-store:$xodus_version",
+            "org.slf4j:slf4j-api:1.7.24",
+            "ch.qos.logback:logback-classic:1.1.8"
 
     testCompile "junit:junit:4.12",
             "io.vertx:vertx-unit:$vertx_version",

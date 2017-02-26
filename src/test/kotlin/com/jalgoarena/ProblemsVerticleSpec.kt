@@ -1,5 +1,7 @@
 package com.jalgoarena
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.jalgoarena.domain.Problem
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
@@ -43,10 +45,16 @@ class ProblemsVerticleSpec {
     fun starts_up(context: TestContext) {
         val async = context.async()
 
-        vertx.createHttpClient().getNow(port, "localhost", "/problems") { response ->
+        vertx.createHttpClient().getNow(port, "localhost", "/problems/fib") { response ->
             response.handler { body ->
-                context.assertTrue(body.toString().contains("fib"))
-                async.complete()
+                try {
+                    val problems = jacksonObjectMapper().readValue(body.toString(), Problem::class.java)
+                    context.assertTrue(problems.id == "fib")
+                } catch(e: Throwable) {
+                    context.fail(e)
+                } finally {
+                    async.complete()
+                }
             }
         }
     }
